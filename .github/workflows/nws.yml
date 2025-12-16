@@ -20,3 +20,10 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
           node alert.js
+      - name: Save seen alerts
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add seen.json
+          git commit -m "Update seen alerts" || echo "No changes"
+          git push
