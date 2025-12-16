@@ -7,7 +7,8 @@ const CITIES = {
   "Seattle, WA": [47.6062, -122.3321],
   "San Francisco, CA": [37.7749, -122.4194],
   "Sunnyvale, CA": [37.3688, -122.0363],
-  "San Diego, CA": [32.7157, -117.1611],
+  "Dallas, TX": [32.7767, -96.7970],
+  "Houston, TX": [29.7604, -95.3698],
 };
 
 const SEEN_FILE = "seen.json";
@@ -34,9 +35,13 @@ async function checkCity(city, lat, lon) {
   const res = await fetch(url, { headers: HEADERS });
   const data = await res.json();
 
+  if (!data.features) return;
+
   for (const alert of data.features) {
-    if (seen.has(alert.id)) continue;
-    seen.add(alert.id);
+    const alertId = alert.properties.id;
+
+    if (seen.has(alertId)) continue;
+    seen.add(alertId);
 
     const p = alert.properties;
 
@@ -61,4 +66,4 @@ for (const [city, [lat, lon]] of Object.entries(CITIES)) {
   await checkCity(city, lat, lon);
 }
 
-fs.writeFileSync(SEEN_FILE, JSON.stringify([...seen]));
+fs.writeFileSync(SEEN_FILE, JSON.stringify([...seen], null, 2));
